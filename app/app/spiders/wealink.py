@@ -3,6 +3,9 @@ import scrapy
 
 
 class WealinkSpider(scrapy.Spider):
+    """
+    wealink 模拟登陆
+    """
     name = "wealink"
     allowed_domains = ["www.wealink.com"]
     start_urls = (

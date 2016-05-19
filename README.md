@@ -29,3 +29,20 @@ DEBUG: Crawled (200) <GET http://localhost:5000/blog/list/> (referer: None) ['ca
 ```
 
 如果需要更新抓取结果，则需要清空缓存
+
+
+## 数据处理
+
+sqlalchemy
+
+```
+$ pip install MySQL-python
+$ pip install SQLAlchemy
+$ pip install sqlacodegen
+```
+[http://doc.scrapy.org/en/latest/topics/item-pipeline.html](http://doc.scrapy.org/en/latest/topics/item-pipeline.html)
+
+
+## 页面处理
+[http://doc.scrapy.org/en/latest/topics/selectors.html](http://doc.scrapy.org/en/latest/topics/selectors.html)
+
