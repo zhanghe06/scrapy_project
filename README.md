@@ -46,3 +46,10 @@ $ pip install sqlacodegen
 ## 页面处理
 [http://doc.scrapy.org/en/latest/topics/selectors.html](http://doc.scrapy.org/en/latest/topics/selectors.html)
 
+Request 优先级
+[http://doc.scrapy.org/en/latest/topics/request-response.html?highlight=priority#request-objects](http://doc.scrapy.org/en/latest/topics/request-response.html?highlight=priority#request-objects)
+
+priority (int) – the priority of this request (defaults to 0).
+The priority is used by the scheduler to define the order used to process requests.
+Requests with a higher priority value will execute earlier.
+Negative values are allowed in order to indicate relatively low-priority.
