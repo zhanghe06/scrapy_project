@@ -4,9 +4,9 @@ import scrapy
 
 class LocalTestSpider(scrapy.Spider):
     name = "local_test"
-    allowed_domains = ["localhost:5000"]
+    allowed_domains = ["localhost:8000"]
     start_urls = (
-        'http://localhost:5000/blog/list/',
+        'http://localhost:8000/blog/list/',
     )
 
     def parse(self, response):

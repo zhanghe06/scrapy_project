@@ -11,43 +11,68 @@
 
 import os
 import sys
-from config import BASE_DIR, SQLALCHEMY_DATABASE_URI, DB_CRAWL
+from sqlalchemy.ext.declarative.api import DeclarativeMeta
+from sqlalchemy.inspection import inspect
+from config import BASE_DIR
+
+# MySQL
+# from config import SQLALCHEMY_DATABASE_URI_MYSQL as SQLALCHEMY_DATABASE_URI
+# PostgreSQL
+from config import SQLALCHEMY_DATABASE_URI_PG as SQLALCHEMY_DATABASE_URI
 
 
-def gen_model():
+def gen_models():
     """
-    创建model
-    $ python gen.py gen_model
+    创建 models
+    $ python gen.py gen_models
     """
-    cmd = 'sqlacodegen %s --outfile %s' % (SQLALCHEMY_DATABASE_URI, os.path.join(BASE_DIR, 'models.py'))
-    print cmd
+    file_path = os.path.join(BASE_DIR, 'models.py')
+    cmd = 'sqlacodegen %s --outfile %s' % (SQLALCHEMY_DATABASE_URI, file_path)
+
     output = os.popen(cmd)
     result = output.read()
     print result
 
+    # 更新 model 文件
+    with open(file_path, 'r') as f:
+        lines = f.readlines()
+    # 新增 model 转 dict 方法
+    with open(file_path, 'w') as f:
+        lines.insert(9, 'def to_dict(self):\n')
+        lines.insert(10, '    return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}\n')
+        lines.insert(11, '\n')
+        lines.insert(12, 'Base.to_dict = to_dict\n')
+        lines.insert(13, '\n\n')
+        f.write(''.join(lines))
 
-def create_db():
-    """
-    建库 建表
-    $ python gen.py create_db
-    """
-    cmd = 'mysql -h%s -u%s -p%s < %s' % (DB_CRAWL['host'], DB_CRAWL['user'], DB_CRAWL['passwd'], os.path.join(BASE_DIR, 'db_create.sql'))
-    print cmd
-    output = os.popen(cmd)
-    result = output.read()
-    print result
 
+def gen_items():
+    """
+    创建 items
+    $ python gen.py gen_items > items.py
+    字段规则： 去除自增主键，非自增是需要的。
+    """
+    import models
+    model_list = [k for k, v in models.__dict__.iteritems() if isinstance(v, DeclarativeMeta) and k != 'Base']
+    # print json.dumps(model_list, indent=4)
+    print '''# -*- coding: utf-8 -*-
 
-def dump_db():
-    """
-    备份数据
-    $ python gen.py dump_db
-    """
-    cmd = 'mysqldump -h%s -u%s -p%s %s > %s' % (DB_CRAWL['host'], DB_CRAWL['user'], DB_CRAWL['passwd'], DB_CRAWL['db'], os.path.join(BASE_DIR, 'db_dump.sql'))
-    print cmd
-    output = os.popen(cmd)
-    result = output.read()
-    print result
+# Define here the models for your scraped items
+#
+# See documentation in:
+# http://doc.scrapy.org/en/latest/topics/items.html
+
+import scrapy'''
+    for model_item in model_list:
+        result = eval(model_item)().to_dict()
+        model_pk = inspect(eval(model_item)).primary_key[0]
+        print '\n'
+        print 'class %sItem(scrapy.Item):' % model_item
+        print '    """'
+        print '    primary_key： %s' % model_pk
+        print '    """'
+        for field_name in result.keys():
+            print '    %s = scrapy.Field()' % field_name
 
 
 def run():
@@ -69,11 +94,11 @@ def run():
 
 def usage():
     print """
-创建(更新)model
-$ python gen.py gen_model
+创建 models
+$ python gen.py gen_models
 
-建库 建表（初始化数据库）
-$ python gen.py create_db
+创建 items
+$ python gen.py gen_items > items.py
 """
 
 
