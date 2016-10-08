@@ -17,21 +17,25 @@ def md5(source_str):
 
 
 base_city_ist = [
-    'sh',
-    'sz'
+    'sh'
 ]
 
 base_cate_list = [
-    'banjia'
+    'baojie',
+    'dianqi',
+    'baomu',
+    'shoujiweixiu'
 ]
 
 
-class Crawl58Spider(scrapy.Spider):
-    name = "crawl58"
+class Crawl58v2Spider(scrapy.Spider):
+    name = "crawl58v2"
     allowed_domains = ["58.com"]
     start_urls = [
-        'http://sh.58.com/banjia/',  # 搬家
-        'http://sz.58.com/banjia/',  # 搬家（深圳）
+        'http://sh.58.com/baojie/',  # 保洁清洗
+        'http://sh.58.com/dianqi/',  # 家电维修
+        'http://sh.58.com/baomu/',  # 保姆/月嫂
+        'http://sh.58.com/shoujiweixiu/',  # 手机维修
     ]
 
     city_rule = r'.*/(\w+)/\w+/$'
@@ -86,16 +90,16 @@ class Crawl58Spider(scrapy.Spider):
         page_num = page_num_result[0] if page_num_result else ''
 
         # 获取列表
-        trs = response.xpath('//div[@id="infolist"]//div[contains(@class, "listWrap")]')
+        trs = response.xpath('//table[@id="jingzhun"]//tr//div[@class="tdiv"]')
         for tr in trs:
-            link_list = tr.xpath('.//div[@class="listInfo"]/a[@class="t"]/@href')
+            link_list = tr.xpath('.//a[@class="t"]/@href')
             service_link = link_list.extract_first(default='')
             # print service_link
             if service_link:
                 # 服务项目
-                # service_lb = tr.xpath('.//dl[contains(@class, "bjlb")]/dd/a/text()').extract_first(default='').strip()
+                # service_lb = tr.xpath('//dl[contains(@class, "bjlb")]/dd/a/text()').extract_first(default='').strip()
                 # 获取服务商logo
-                service_logo = tr.xpath('.//div[@class="mainTitle"]/h1/text()').extract_first(default='').strip()
+                service_logo = ''
                 # 认证状态（企业、个人）
                 qiye_v = int(tr.xpath('.//i[contains(@class, "qiye")]/@title').extract_first(default='').strip() == u'企业营业执照已认证')
                 geren_v = int(tr.xpath('.//i[contains(@class, "geren")]/@title').extract_first(default='').strip() == u'个人身份已认证')

@@ -73,6 +73,7 @@ It’s customary to define these numbers in the 0-1000 range.
 参考 [Settings](http://scrapy-chs.readthedocs.io/zh_CN/latest/topics/settings.html)
 
 RANDOMIZE_DOWNLOAD_DELAY = True     # 默认 True（0.5 到 1.5 之间的一个随机值 * DOWNLOAD_DELAY）
+
 DOWNLOAD_DELAY = 0.25               # 250 ms of delay 设置为正数, 支持小数（默认 0）
 
 ROBOTSTXT_OBEY = False              # 默认 False（如果启用, Scrapy 将会尊重 robots.txt 策略）

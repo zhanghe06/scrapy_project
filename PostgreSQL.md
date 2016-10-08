@@ -1,3 +1,49 @@
+## 安装启动
+
+### Mac
+
+安装
+```
+✗ brew install postgres
+```
+
+查看 postgres 相关操作
+```
+✗ brew info postgres
+```
+
+根据提示启动服务（测试不需要后台运行）
+```
+✗ postgres -D /usr/local/var/postgres
+```
+
+创建用户
+```
+✗ createuser postgres -P
+Enter password for new role:[密码]
+Enter it again:[密码]
+```
+
+创建数据库
+```
+✗ createdb test -O postgres -E UTF8 -e
+```
+
+连接数据库
+```
+✗ psql -U postgres -d test -h 127.0.0.1
+psql (9.5.4)
+Type "help" for help.
+
+test=>
+```
+
+
+### Ubuntu
+
+略...
+
+
 ## 数据类型
 
 1. 数值类型
