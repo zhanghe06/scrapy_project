@@ -3,3 +3,11 @@
 *.env
 *.idea
 *.pyc
+
+# scrapyd 部署
+app/build/
+app/dbs/
+app/eggs/
+app/project.egg-info/
+app/setup.py
+app/twistd.pid
