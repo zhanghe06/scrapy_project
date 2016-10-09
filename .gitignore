@@ -11,3 +11,10 @@ app/eggs/
 app/project.egg-info/
 app/setup.py
 app/twistd.pid
+
+# 抓取记录、日志
+app/items
+app/logs
+
+# supervisor 日志
+logs/*.log

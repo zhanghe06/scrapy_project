@@ -65,7 +65,7 @@ DOWNLOADER_MIDDLEWARES = {
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     # v3 版本
-    'app.pipelines.v3.DuplicatesRedisPipeline': 300,  # 去重
+    # 'app.pipelines.v3.DuplicatesRedisPipeline': 300,  # 去重
     'app.pipelines.v3.StorePostgreSQLPipeline': 800,  # 写库
 }
 

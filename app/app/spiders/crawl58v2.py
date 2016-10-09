@@ -56,7 +56,7 @@ class Crawl58v2Spider(scrapy.Spider):
         cate_list = set()  # 服务项目
         res_city_list = response.xpath('//*[@id="relateSelect"]//a/@href').extract()
         for res_city in res_city_list:
-            city = re.compile(self.city_rule, re.I).findall(res_city)
+            city = self.city_re_compile.findall(res_city)
             if not city:
                 continue
             city_list.add(city[0] if city else None)
@@ -67,7 +67,7 @@ class Crawl58v2Spider(scrapy.Spider):
         # 服务项目
         res_cate_list = response.xpath('//*[@id="ObjectType"]//a/@href').extract()
         for res_cate in res_cate_list:
-            cate = re.compile(self.cate_rule, re.I).findall(res_cate)
+            cate = self.cate_re_compile.findall(res_cate)
             if not cate:
                 continue
             cate_list.add(cate[0] if cate else None)
@@ -88,6 +88,10 @@ class Crawl58v2Spider(scrapy.Spider):
         # 获取当前页码
         page_num_result = self.page_num_re_compile.findall(response.url)
         page_num = page_num_result[0] if page_num_result else ''
+
+        # 获取当前列表页面分类
+        url_res = urlparse.urlparse(response.url)
+        cate_name = url_res.path.strip('/').split('/')[1]
 
         # 获取列表
         trs = response.xpath('//table[@id="jingzhun"]//tr//div[@class="tdiv"]')
@@ -113,7 +117,8 @@ class Crawl58v2Spider(scrapy.Spider):
                         'page_num': page_num,
                         'service_logo': service_logo,
                         'qiye_v': qiye_v,
-                        'geren_v': geren_v
+                        'geren_v': geren_v,
+                        'cate_name': cate_name
                     }
                 )
         # 下一页
@@ -134,7 +139,6 @@ class Crawl58v2Spider(scrapy.Spider):
         url_res = urlparse.urlparse(response.url)
         service_url = response.url.replace('?%s' % url_res.query, '')
         city_name = url_res.netloc.replace('.58.com', '')
-        cate_name = url_res.path.strip('/').split('/')[0]
         # 获取页面信息
         service_title = response.xpath('//div[@class="mainTitle"]/h1/text()').extract_first(default='').strip()
         pub_time = response.xpath('//div[@id="index_show"]//li[@class="time"]/text()').extract_first(default='').strip()
@@ -160,7 +164,7 @@ class Crawl58v2Spider(scrapy.Spider):
         item_service['city_id'] = ''  # 城市id
         item_service['city_name'] = city_name  # 城市名称
         item_service['industry'] = ''  # 行业
-        item_service['source_sid'] = cate_name  # 原始service_id
+        item_service['source_sid'] = response.meta['cate_name']  # 原始service_id
         item_service['classify_url'] = response.meta['list_url']  # 来源页面url
         item_service['detail_url'] = service_url
         item_service['url_md5'] = md5(service_url)  # 详细页的url
