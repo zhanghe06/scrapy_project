@@ -89,4 +89,4 @@ ITEM_PIPELINES = {
 #HTTPCACHE_STORAGE='scrapy.extensions.httpcache.FilesystemCacheStorage'
 
 # 导入自定义配置文件
-from config import *
+from app.config import *

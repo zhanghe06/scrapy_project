@@ -3,35 +3,24 @@ import scrapy
 import re
 import urlparse
 import time
-import hashlib
+from app.tools import md5
 from app.items.v3 import ServiceV3Item, ProviderV3Item
 
 
-def md5(source_str):
-    """
-    md5加密
-    :param source_str:
-    :return:
-    """
-    return hashlib.md5(source_str.encode("utf8") if isinstance(source_str, unicode) else source_str).hexdigest()
-
-
 base_city_ist = [
-    'sh',
-    'sz'
+    'sh'
 ]
 
 base_cate_list = [
-    'banjia'
+    'baojie'
 ]
 
 
-class Crawl58Spider(scrapy.Spider):
-    name = "crawl58"
+class Crawl58BaojieSpider(scrapy.Spider):
+    name = "crawl58_baojie"
     allowed_domains = ["58.com"]
     start_urls = [
-        'http://sh.58.com/banjia/',  # 搬家
-        'http://sz.58.com/banjia/',  # 搬家（深圳）
+        'http://sh.58.com/baojie/'  # 保洁清洗
     ]
 
     city_rule = r'.*/(\w+)/\w+/$'
@@ -72,7 +61,8 @@ class Crawl58Spider(scrapy.Spider):
         # with open('cate_list', 'wb') as f:
         #     f.write('\n'.join(list(cate_list)))
         # 新增入口页面
-        new_start_urls = ['http://%s/%s/%s/pn1/' % (urlparse.urlparse(response.url).netloc, city, cate) for city in city_list for cate in cate_list]
+        new_start_urls = ['http://%s/%s/%s/pn1/' % (urlparse.urlparse(response.url).netloc, city, cate) for city in
+                          city_list for cate in cate_list]
         for url in new_start_urls:
             # 抓取入口首页
             yield scrapy.Request(url=url, callback=self.parse_list, priority=0)
@@ -90,19 +80,21 @@ class Crawl58Spider(scrapy.Spider):
         cate_name = url_res.path.strip('/').split('/')[1]
 
         # 获取列表
-        trs = response.xpath('//div[@id="infolist"]//div[contains(@class, "listWrap")]')
+        trs = response.xpath('//table[@id="jingzhun"]//tr//div[@class="tdiv"]')
         for tr in trs:
-            link_list = tr.xpath('.//div[@class="listInfo"]/a[@class="t"]/@href')
+            link_list = tr.xpath('.//a[@class="t"]/@href')
             service_link = link_list.extract_first(default='')
             # print service_link
             if service_link:
                 # 服务项目
-                # service_lb = tr.xpath('.//dl[contains(@class, "bjlb")]/dd/a/text()').extract_first(default='').strip()
+                # service_lb = tr.xpath('//dl[contains(@class, "bjlb")]/dd/a/text()').extract_first(default='').strip()
                 # 获取服务商logo
-                service_logo = tr.xpath('.//div[@class="mainTitle"]/h1/text()').extract_first(default='').strip()
+                service_logo = ''
                 # 认证状态（企业、个人）
-                qiye_v = int(tr.xpath('.//i[contains(@class, "qiye")]/@title').extract_first(default='').strip() == u'企业营业执照已认证')
-                geren_v = int(tr.xpath('.//i[contains(@class, "geren")]/@title').extract_first(default='').strip() == u'个人身份已认证')
+                qiye_v = int(
+                    tr.xpath('.//i[contains(@class, "qiye")]/@title').extract_first(default='').strip() == u'企业营业执照已认证')
+                geren_v = int(
+                    tr.xpath('.//i[contains(@class, "geren")]/@title').extract_first(default='').strip() == u'个人身份已认证')
                 # 抓取详情页面
                 yield scrapy.Request(
                     url=service_link,
@@ -138,14 +130,21 @@ class Crawl58Spider(scrapy.Spider):
         # 获取页面信息
         service_title = response.xpath('//div[@class="mainTitle"]/h1/text()').extract_first(default='').strip()
         pub_time = response.xpath('//div[@id="index_show"]//li[@class="time"]/text()').extract_first(default='').strip()
-        service_district = response.xpath('//div[contains(@class, "quyuline")]/a/text()').extract_first(default='').strip()
+        service_district = response.xpath('//div[contains(@class, "quyuline")]/a/text()').extract_first(
+            default='').strip()
         # service_cate = response.xpath('//a[@class="hqgs"]/text()').extract_first(default='').strip()
-        service_contacts = response.xpath('//div[contains(@class, "mg_l_7")]/a/text()').extract_first(default='').strip()
+        service_contacts = response.xpath('//div[contains(@class, "mg_l_7")]/a/text()').extract_first(
+            default='').strip()
         service_phone = response.xpath('//span[@class="l_phone"]/text()').extract_first(default='').strip()
-        company_district = ' - '.join([item.strip('- ') for item in response.xpath('//div[@class="description"]/div[@class="newinfo"]/ul/li[1]/a/text()').extract()])
-        company_address = response.xpath('//div[@class="description"]/div[@class="newinfo"]/ul/li[1]/span[@class="adr"]/text()').extract_first(default='').strip('- ')
-        company_name = response.xpath('//section[@id="side"]/div[@class="userinfo"]/h2/text()').extract_first(default='').strip()
-        company_home_page = response.xpath('//li[@class="weizhan"]//div[@class="zhan_r_con"]/a/@href').extract_first(default='').strip()
+        company_district = ' - '.join([item.strip('- ') for item in response.xpath(
+            '//div[@class="description"]/div[@class="newinfo"]/ul/li[1]/a/text()').extract()])
+        company_address = response.xpath(
+            '//div[@class="description"]/div[@class="newinfo"]/ul/li[1]/span[@class="adr"]/text()').extract_first(
+            default='').strip('- ')
+        company_name = response.xpath('//section[@id="side"]/div[@class="userinfo"]/h2/text()').extract_first(
+            default='').strip()
+        company_home_page = response.xpath('//li[@class="weizhan"]//div[@class="zhan_r_con"]/a/@href').extract_first(
+            default='').strip()
 
         # 保存服务信息
         item_service = ServiceV3Item()
@@ -200,36 +199,6 @@ class Crawl58Spider(scrapy.Spider):
         yield item_provider
 
 
-# scrapy genspider crawl58 58.com
+# scrapy genspider crawl58_baojie 58.com
 
-# scrapy crawl crawl58
-
-# 每个分类最大页码 70
-# 每页最大记录 40
-
-
-# 方案一：
-# 页面靠前的优先抓取
-# 入口 800
-# 详情 600
-# 列表 400
-
-
-# 索引
-# service
-# (source_type, title)
-#
-# provider
-# (full_name, source_type)
-
-
-# delete from origin_provider_v3 ;
-# delete from origin_service_v3 ;
-
-# 统计标题重复的数据
-# select title, count(*) as c from origin_service_v3 group by title order by c desc;
-#
-# select count(distinct(title)) from origin_service_v3;
-#
-# 统计分类
-# select source_sid, count(*) as c from origin_service_v3 group by source_sid order by c desc;
+# scrapy crawl crawl58_baojie

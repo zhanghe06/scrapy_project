@@ -29,6 +29,8 @@ scrapyd scrapyd-deploy 所有操作都需要在项目目录下进行
 25673
 ✗ ps -aux | grep 25673
 ```
+同时生产一个 dbs 目录，存放部署项目的配置，如: default.db
+
 
 添加部署配置
 

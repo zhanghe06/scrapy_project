@@ -175,6 +175,21 @@ scrapy crawl csdnblog -o items.json
 ```
 
 
+## 增量抓取
+
+[Jobs: 暂停，恢复爬虫](http://scrapy-chs.readthedocs.io/zh_CN/latest/topics/jobs.html)
+
+启用一个爬虫的持久化/恢复这个爬虫
+```
+✗ scrapy crawl somespider -s JOBDIR=crawls/somespider-1
+```
+
+安全的停止爬虫
+```
+Ctrl-C或者发送一个信号
+```
+
+
 ## 框架介绍
 
 ### 架构概览

@@ -39,9 +39,88 @@ test=>
 ```
 
 
+允许远程连接
+
+默认是不能远程连接的，先看一下端口情况：
+```
+✗ netstat -ant | grep 5432
+tcp4       0      0  127.0.0.1.5432         *.*                    LISTEN
+tcp6       0      0  ::1.5432               *.*                    LISTEN
+c884571d5af7d0f3 stream      0      0 c884571d5579c5fb                0                0
+```
+
+查找 postgres 目录
+```
+✗ ps aux | grep postgres
+```
+找到 postgres -D /usr/local/var/postgres 这一行， -D 参数指定的值就是 pg 目录
+
+进入 pg 目录，并修改配置文件
+```
+✗ cd /usr/local/var/postgres
+✗ sudo vim postgresql.conf
+如果是 brew 安装，也可以直接用以下命令
+✗ sudo vim `brew --prefix`/var/postgres/postgresql.conf
+```
+
+```
+#listen_addresses = 'localhost'
+修改为
+listen_addresses = '*'
+```
+
+重启服务
+```
+✗ killall postgres
+✗ postgres -D /usr/local/var/postgres
+```
+
+再次查看端口情况
+```
+✗ netstat -ant | grep 5432
+tcp6       0      0  *.5432                 *.*                    LISTEN
+tcp4       0      0  *.5432                 *.*                    LISTEN
+c884571d5f8ef02b stream      0      0 c884571d4ef8da5b                0                0                0 /tmp/.s.PGSQL.5432
+```
+
+
+修改客户端认证配置文件
+```
+✗ sudo vim `brew --prefix`/var/postgres/pg_hba.conf
+```
+
+```
+# IPv4 local connections:
+host    all             all             0.0.0.0/0               md5
+host    all             all             127.0.0.1/32            trust
+# replication privilege.
+host    replication     postgres        0.0.0.0/0               md5
+```
+
+- trust - anyone who can connect to the server is authorized to access the database
+- peer - use client's operating system user name as database user name to access it.
+- md5 - password-base authentication
+
+重启服务之后就可以远程连接了
+```
+✗ psql -h 192.168.2.32 -U postgres -d test
+```
+
+
 ### Ubuntu
 
-略...
+配置文件路径
+```
+$ locate postgresql.conf
+/etc/postgresql/9.3/main/postgresql.conf
+```
+
+服务重启
+```
+$ sudo service postgresql restart
+```
+其他略...
+
 
 
 ## 数据类型

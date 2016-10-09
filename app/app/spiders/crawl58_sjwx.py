@@ -3,39 +3,25 @@ import scrapy
 import re
 import urlparse
 import time
-import hashlib
+from app.tools import md5
 from app.items.v3 import ServiceV3Item, ProviderV3Item
-
-
-def md5(source_str):
-    """
-    md5加密
-    :param source_str:
-    :return:
-    """
-    return hashlib.md5(source_str.encode("utf8") if isinstance(source_str, unicode) else source_str).hexdigest()
 
 
 base_city_ist = [
     'sh'
 ]
 
+# 只有一个分类，没有子分类
 base_cate_list = [
-    'baojie',
-    'dianqi',
-    'baomu',
     'shoujiweixiu'
 ]
 
 
-class Crawl58v2Spider(scrapy.Spider):
-    name = "crawl58v2"
+class Crawl58SjwxSpider(scrapy.Spider):
+    name = "crawl58_sjwx"
     allowed_domains = ["58.com"]
     start_urls = [
-        'http://sh.58.com/baojie/',  # 保洁清洗
-        'http://sh.58.com/dianqi/',  # 家电维修
-        'http://sh.58.com/baomu/',  # 保姆/月嫂
-        'http://sh.58.com/shoujiweixiu/',  # 手机维修
+        'http://sh.58.com/shoujiweixiu/'  # 手机维修
     ]
 
     city_rule = r'.*/(\w+)/\w+/$'
@@ -53,7 +39,7 @@ class Crawl58v2Spider(scrapy.Spider):
         # 服务范围
         # print response.url
         city_list = set()  # 服务范围
-        cate_list = set()  # 服务项目
+        # cate_list = set()  # 服务项目
         res_city_list = response.xpath('//*[@id="relateSelect"]//a/@href').extract()
         for res_city in res_city_list:
             city = self.city_re_compile.findall(res_city)
@@ -61,22 +47,19 @@ class Crawl58v2Spider(scrapy.Spider):
                 continue
             city_list.add(city[0] if city else None)
         city_list -= set(base_city_ist)
-        # 保存 city_list
-        # with open('city_list', 'wb') as f:
-        #     f.write('\n'.join(list(city_list)))
+
         # 服务项目
-        res_cate_list = response.xpath('//*[@id="ObjectType"]//a/@href').extract()
-        for res_cate in res_cate_list:
-            cate = self.cate_re_compile.findall(res_cate)
-            if not cate:
-                continue
-            cate_list.add(cate[0] if cate else None)
-        cate_list -= set(base_cate_list)
-        # 保存 cate_list
-        # with open('cate_list', 'wb') as f:
-        #     f.write('\n'.join(list(cate_list)))
+        # res_cate_list = response.xpath('//*[@id="ObjectType"]//a/@href').extract()
+        # for res_cate in res_cate_list:
+        #     cate = self.cate_re_compile.findall(res_cate)
+        #     if not cate:
+        #         continue
+        #     cate_list.add(cate[0] if cate else None)
+        cate_list = base_cate_list
+
         # 新增入口页面
-        new_start_urls = ['http://%s/%s/%s/pn1/' % (urlparse.urlparse(response.url).netloc, city, cate) for city in city_list for cate in cate_list]
+        new_start_urls = ['http://%s/%s/%s/pn1/' % (urlparse.urlparse(response.url).netloc, city, cate) for city in
+                          city_list for cate in cate_list]
         for url in new_start_urls:
             # 抓取入口首页
             yield scrapy.Request(url=url, callback=self.parse_list, priority=0)
@@ -105,8 +88,10 @@ class Crawl58v2Spider(scrapy.Spider):
                 # 获取服务商logo
                 service_logo = ''
                 # 认证状态（企业、个人）
-                qiye_v = int(tr.xpath('.//i[contains(@class, "qiye")]/@title').extract_first(default='').strip() == u'企业营业执照已认证')
-                geren_v = int(tr.xpath('.//i[contains(@class, "geren")]/@title').extract_first(default='').strip() == u'个人身份已认证')
+                qiye_v = int(
+                    tr.xpath('.//i[contains(@class, "qiye")]/@title').extract_first(default='').strip() == u'企业营业执照已认证')
+                geren_v = int(
+                    tr.xpath('.//i[contains(@class, "geren")]/@title').extract_first(default='').strip() == u'个人身份已认证')
                 # 抓取详情页面
                 yield scrapy.Request(
                     url=service_link,
@@ -142,14 +127,21 @@ class Crawl58v2Spider(scrapy.Spider):
         # 获取页面信息
         service_title = response.xpath('//div[@class="mainTitle"]/h1/text()').extract_first(default='').strip()
         pub_time = response.xpath('//div[@id="index_show"]//li[@class="time"]/text()').extract_first(default='').strip()
-        service_district = response.xpath('//div[contains(@class, "quyuline")]/a/text()').extract_first(default='').strip()
+        service_district = response.xpath('//div[contains(@class, "quyuline")]/a/text()').extract_first(
+            default='').strip()
         # service_cate = response.xpath('//a[@class="hqgs"]/text()').extract_first(default='').strip()
-        service_contacts = response.xpath('//div[contains(@class, "mg_l_7")]/a/text()').extract_first(default='').strip()
+        service_contacts = response.xpath('//div[contains(@class, "mg_l_7")]/a/text()').extract_first(
+            default='').strip()
         service_phone = response.xpath('//span[@class="l_phone"]/text()').extract_first(default='').strip()
-        company_district = ' - '.join([item.strip('- ') for item in response.xpath('//div[@class="description"]/div[@class="newinfo"]/ul/li[1]/a/text()').extract()])
-        company_address = response.xpath('//div[@class="description"]/div[@class="newinfo"]/ul/li[1]/span[@class="adr"]/text()').extract_first(default='').strip('- ')
-        company_name = response.xpath('//section[@id="side"]/div[@class="userinfo"]/h2/text()').extract_first(default='').strip()
-        company_home_page = response.xpath('//li[@class="weizhan"]//div[@class="zhan_r_con"]/a/@href').extract_first(default='').strip()
+        company_district = ' - '.join([item.strip('- ') for item in response.xpath(
+            '//div[@class="description"]/div[@class="newinfo"]/ul/li[1]/a/text()').extract()])
+        company_address = response.xpath(
+            '//div[@class="description"]/div[@class="newinfo"]/ul/li[1]/span[@class="adr"]/text()').extract_first(
+            default='').strip('- ')
+        company_name = response.xpath('//section[@id="side"]/div[@class="userinfo"]/h2/text()').extract_first(
+            default='').strip()
+        company_home_page = response.xpath('//li[@class="weizhan"]//div[@class="zhan_r_con"]/a/@href').extract_first(
+            default='').strip()
 
         # 保存服务信息
         item_service = ServiceV3Item()
@@ -204,28 +196,6 @@ class Crawl58v2Spider(scrapy.Spider):
         yield item_provider
 
 
-# scrapy genspider crawl58 58.com
+# scrapy genspider crawl58_sjwx 58.com
 
-# scrapy crawl crawl58
-
-# 每个分类最大页码 70
-# 每页最大记录 40
-
-
-# 方案一：
-# 页面靠前的优先抓取
-# 入口 800
-# 详情 600
-# 列表 400
-
-
-# 索引
-# service
-# (source_type, title)
-#
-# provider
-# (full_name, source_type)
-
-
-# delete from origin_provider_v3 ;
-# delete from origin_service_v3 ;
+# scrapy crawl crawl58_sjwx
