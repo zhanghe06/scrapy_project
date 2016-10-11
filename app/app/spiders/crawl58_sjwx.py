@@ -198,4 +198,5 @@ class Crawl58SjwxSpider(scrapy.Spider):
 
 # scrapy genspider crawl58_sjwx 58.com
 
-# scrapy crawl crawl58_sjwx
+# scrapy crawl crawl58_sjwx -s JOBDIR=crawls/app/crawl58_sjwx
+

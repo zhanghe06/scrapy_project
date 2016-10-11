@@ -187,4 +187,5 @@ class Crawl58BaomuSpider(scrapy.Spider):
 
 # scrapy genspider crawl58_baomu 58.com
 
-# scrapy crawl crawl58_baomu
+# scrapy crawl crawl58_baomu -s JOBDIR=crawls/app/crawl58_baomu
+

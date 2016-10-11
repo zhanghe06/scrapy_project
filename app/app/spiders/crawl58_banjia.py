@@ -189,7 +189,7 @@ class Crawl58BanjiaSpider(scrapy.Spider):
 
 # scrapy genspider crawl58_banjia 58.com
 
-# scrapy crawl crawl58_banjia
+# scrapy crawl crawl58_banjia -s JOBDIR=crawls/app/crawl58_banjia
 
 # 每个分类最大页码 70
 # 每页最大记录 40
@@ -220,3 +220,6 @@ class Crawl58BanjiaSpider(scrapy.Spider):
 #
 # 统计分类
 # select source_sid, count(*) as c from origin_service_v3 group by source_sid order by c desc;
+
+# 特殊页面无法获取公司名称（个人）
+# http://sz.58.com/banjia/24116225137720x.shtml

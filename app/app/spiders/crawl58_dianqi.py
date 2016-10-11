@@ -196,4 +196,5 @@ class Crawl58DianqiSpider(scrapy.Spider):
 
 # scrapy genspider crawl58_dianqi 58.com
 
-# scrapy crawl crawl58_dianqi
+# scrapy crawl crawl58_dianqi -s JOBDIR=crawls/app/crawl58_dianqi
+

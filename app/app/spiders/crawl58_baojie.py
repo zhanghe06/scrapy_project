@@ -201,4 +201,4 @@ class Crawl58BaojieSpider(scrapy.Spider):
 
 # scrapy genspider crawl58_baojie 58.com
 
-# scrapy crawl crawl58_baojie
+# scrapy crawl crawl58_baojie -s JOBDIR=crawls/app/crawl58_baojie
