@@ -161,13 +161,26 @@ date | 4字节 | 只用于日期 | 4713 BC | 32767AD | 1天
 time[无时区] | 8字节 | 只用于一日内时间 | 00:00:00 | 24:00:00 | 1毫秒/14位
 
 
-## 建库、建表过程
+## 数据库操作
 
+建库、建表过程
 ```
 $ sudo su postgres
 $ createdb test
 $ psql test
 postgres=# \l
+```
+
+删表
+```
+$ sudo su postgres
+$ psql test
+postgres=# DROP TABLE service CASCADE;
+```
+
+重命名表
+```
+alter table 表名 rename to 新表名
 ```
 
 
@@ -192,4 +205,31 @@ CREATE INDEX table_column_idx ON table (column);
 CREATE INDEX table_column_a_b_idx ON table (column_a, column_b);
 # 唯一索引
 CREATE UNIQUE INDEX table_column_key ON table (column);
+```
+
+
+## 高级功能
+
+分组去重
+```
+-- MySQL 写法
+SELECT phone,
+       count(*) AS c,
+       group_concat(DISTINCT city_name)
+FROM service
+GROUP BY phone
+ORDER BY c DESC;
+
+-- PostgreSQL 写法
+SELECT phone,
+       count(*) AS c,
+       string_agg(DISTINCT city_name, ',')
+FROM service
+GROUP BY phone
+ORDER BY c DESC;
+```
+
+字符串分割为数组
+```
+SELECT regexp_split_to_array('kenyon,love,,china,!', ',');
 ```

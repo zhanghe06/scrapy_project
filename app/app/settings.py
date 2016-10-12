@@ -64,9 +64,8 @@ DOWNLOADER_MIDDLEWARES = {
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    # v3 版本
-    # 'app.pipelines.v3.DuplicatesRedisPipeline': 300,  # 去重
-    'app.pipelines.v3.StorePostgreSQLPipeline': 800,  # 写库
+    # v4 版本
+    'app.pipelines.v4.StorePostgreSQLPipeline': 800,  # 写库
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
