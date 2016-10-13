@@ -4,22 +4,22 @@
 """
 @author: zhanghe
 @software: PyCharm
-@file: local.py
+@file: dev.py
 @time: 16-3-10 下午5:10
 """
 
 
 import os
 
-BASE_DIR = os.path.abspath(os.path.dirname(__file__)+'/../')
+BASE_DIR = os.path.abspath(os.path.dirname(__file__)+'/../../')
 
 # 数据库 MySQL
 DB_MYSQL = {
-    'host': 'localhost',
-    'user': 'root',
-    'passwd': '123456',
+    'host': '192.168.2.201',
+    'user': 'www',
+    'passwd': 'wealink.com',
     'port': 3306,
-    'db': 'test'
+    'db': 's2c'
 }
 SQLALCHEMY_DATABASE_URI_MYSQL = \
     'mysql+mysqldb://%s:%s@%s:%s/%s?charset=utf8' % \
@@ -27,7 +27,7 @@ SQLALCHEMY_DATABASE_URI_MYSQL = \
 
 # 数据库 PostgreSQL
 DB_PG = {
-    'host': 'localhost',
+    'host': '192.168.2.32',
     'user': 'postgres',
     'password': 'postgres',  # 可修改 \password
     'port': 5432,

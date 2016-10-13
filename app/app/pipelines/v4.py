@@ -6,8 +6,8 @@
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 
 
-from ..models.v4 import ServiceV4
-from ..items.v4 import ServiceV4Item
+from app.models.v4 import ServiceV4
+from app.items.v4 import ServiceV4Item
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 

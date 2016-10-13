@@ -52,7 +52,8 @@ DEFAULT_REQUEST_HEADERS = {
 DOWNLOADER_MIDDLEWARES = {
     # 'app.middlewares.MyCustomDownloaderMiddleware': 543,
     'app.middlewares.UserAgentMiddleware': 100,
-    # 'app.middlewares.HttpProxyMiddleware': 100,
+    'app.middlewares.HttpProxyMiddleware': 120,
+    'app.middlewares.IgnoreRequestMiddleware': 140,  # url请求去重
 }
 
 # Enable or disable extensions

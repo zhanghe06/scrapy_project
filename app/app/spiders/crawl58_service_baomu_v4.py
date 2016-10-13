@@ -16,7 +16,7 @@ base_cate_list = [
 
 
 class Crawl58ServiceBaomuV4Spider(scrapy.Spider):
-    name = "crawl58_baomu_service_v4"
+    name = "crawl58_service_baomu_v4"
     allowed_domains = ["58.com"]
     start_urls = [
         'http://sh.58.com/baomu/',  # 保姆/月嫂
@@ -175,7 +175,7 @@ class Crawl58ServiceBaomuV4Spider(scrapy.Spider):
         yield item_service
 
 
-# scrapy genspider crawl58_baomu_service_v4 58.com
+# scrapy genspider crawl58_service_baomu_v4 58.com
 
-# scrapy crawl crawl58_baomu_service_v4 -s JOBDIR=crawls/app/crawl58_baomu_service_v4
+# scrapy crawl crawl58_service_baomu_v4 -s JOBDIR=crawls/app/crawl58_service_baomu_v4
 

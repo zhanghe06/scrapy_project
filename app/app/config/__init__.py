@@ -16,7 +16,7 @@ def get_env():
     """
     获取运行环境
     """
-    file_name = '/'.join((os.path.dirname(os.path.abspath(__file__)), 'config.env'))
+    file_name = '/'.join((os.path.dirname(os.path.abspath(__file__)), 'config_mode'))
     with open(file_name) as f:
         env = f.read()
         if env:
@@ -34,19 +34,17 @@ config_env = get_env()
 
 if config_env == 'online':
     from online import *
-elif config_env == 'test':
-    from test import *
 elif config_env == 'dev':
     from dev import *
-else:
+elif config_env == 'local':
     from local import *
 
 
 """
 环境切换
 进入项目目录
-$ echo 'dev' > config/config.env
-$ echo 'online' > config/config.env
+$ echo 'dev' > config/config_mode
+$ echo 'online' > config/config_mode
 
 使用配置
 from config import *
@@ -55,5 +53,5 @@ from config import *
 app.config.from_object('config')
 即可
 
-注意：config/config.env 这个文件添加至.gitignore，不需要被版本控制追踪管理
+注意：config/config_mode 这个文件添加至.gitignore，不需要被版本控制追踪管理
 """

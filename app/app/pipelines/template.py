@@ -13,8 +13,8 @@ import json
 import redis
 from urllib import quote
 from scrapy.exceptions import DropItem
-from ..models.template import Company, Position
-from ..items.template import CompanyItem, PositionItem
+from app.models.template import Company, Position
+from app.items.template import CompanyItem, PositionItem
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
