@@ -7,7 +7,12 @@
 @file: middlewares.py
 @time: 16-2-24 上午11:23
 """
+
+
 import random
+import hashlib
+import redis
+from scrapy.exceptions import IgnoreRequest
 
 
 class UserAgentMiddleware(object):
@@ -43,3 +48,28 @@ class HttpProxyMiddleware(object):
         # IP地址：[125.122.140.27] 浙江省杭州市 电信
         # request.meta['proxy'] = "http://106.81.213.207:8080"
         request.meta['proxy'] = random.choice(self.proxy_list)
+
+
+class IgnoreRequestMiddleware(object):
+    """
+    url 请求去重
+    """
+    def __init__(self, redis_host, redis_port):
+        self.redis_client = redis.StrictRedis(host=redis_host, port=redis_port)
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        redis_config = crawler.settings.get('REDIS')
+        return cls(
+            redis_host=redis_config.get('host', 'localhost'),
+            redis_port=redis_config.get('port', 6379)
+        )
+
+    def process_request(self, request, spider):
+        if not request.url:
+            return None
+        url_hash = hashlib.md5(request.url.encode("utf8")).hexdigest()
+        if self.redis_client.sismember(spider.name, url_hash):
+            raise IgnoreRequest("Spider : %s, IgnoreRequest : %s" % (spider.name, request.url))
+        else:
+            self.redis_client.sadd(spider.name, url_hash)
