@@ -24,6 +24,15 @@ Enter password for new role:[密码]
 Enter it again:[密码]
 ```
 
+```
+✗ sudo su postgres
+✗ psql -U postgres
+psql (9.6.0)
+输入 "help" 来获取帮助信息.
+
+postgres=# alter user postgres with password 'new password';
+```
+
 创建数据库
 ```
 ✗ createdb test -O postgres -E UTF8 -e
@@ -109,10 +118,12 @@ host    replication     postgres        0.0.0.0/0               md5
 
 ### Ubuntu
 
-配置文件路径
+查找配置文件并修改
 ```
 $ locate postgresql.conf
 /etc/postgresql/9.3/main/postgresql.conf
+$ sudo vim /etc/postgresql/9.3/main/postgresql.conf
+$ sudo vim /etc/postgresql/9.3/main/pg_hba.conf
 ```
 
 服务重启
@@ -169,6 +180,11 @@ $ sudo su postgres
 $ createdb test
 $ psql test
 postgres=# \l
+```
+
+删库
+```
+$ dropdb -U postgres test
 ```
 
 删表
