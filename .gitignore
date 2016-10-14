@@ -21,3 +21,6 @@ logs/*.log
 
 # 抓取队列
 app/crawls
+
+# 环境变量
+config/config_mode
