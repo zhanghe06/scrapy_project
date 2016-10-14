@@ -143,7 +143,7 @@ serverurl=unix:///tmp/supervisor.sock ; use a unix:// URL  for a unix socket
 
 [program:scrapyd]
 command=scrapyd
-directory=app
+directory=/Users/zhanghe/code/scrapy_project/app
 priority=200
 startsecs=0
 stopwaitsecs=0
@@ -159,49 +159,39 @@ programs=crawl58_banjia,crawl58_baojie,crawl58_baomu,crawl58_dianqi,crawl58_sjwx
 
 [program:crawl58_banjia]
 command=scrapy crawl crawl58_service_banjia_v4 -s JOBDIR=crawls/app/crawl58_service_banjia_v4
-directory=app
+directory=/Users/zhanghe/code/scrapy_project/app
 startsecs=0
 stopwaitsecs=0
 autostart=false
-redirect_stderr=true
-stdout_logfile=logs/crawl58_banjia.log
 
 
 [program:crawl58_baojie]
 command=scrapy crawl crawl58_service_baojie_v4 -s JOBDIR=crawls/app/crawl58_service_baojie_v4
-directory=app
+directory=/Users/zhanghe/code/scrapy_project/app
 startsecs=0
 stopwaitsecs=0
 autostart=false
-redirect_stderr=true
-stdout_logfile=logs/crawl58_baojie.log
 
 
 [program:crawl58_baomu]
 command=scrapy crawl crawl58_service_baomu_v4 -s JOBDIR=crawls/app/crawl58_service_baomu_v4
-directory=app
+directory=/Users/zhanghe/code/scrapy_project/app
 startsecs=0
 stopwaitsecs=0
 autostart=false
-redirect_stderr=true
-stdout_logfile=logs/crawl58_baomu.log
 
 
 [program:crawl58_dianqi]
 command=scrapy crawl crawl58_service_dianqi_v4 -s JOBDIR=crawls/app/crawl58_service_dianqi_v4
-directory=app
+directory=/Users/zhanghe/code/scrapy_project/app
 startsecs=0
 stopwaitsecs=0
 autostart=false
-redirect_stderr=true
-stdout_logfile=logs/crawl58_dianqi.log
 
 
 [program:crawl58_sjwx]
 command=scrapy crawl crawl58_service_sjwx_v4 -s JOBDIR=crawls/app/crawl58_service_sjwx_v4
-directory=app
+directory=/Users/zhanghe/code/scrapy_project/app
 startsecs=0
 stopwaitsecs=0
 autostart=false
-redirect_stderr=true
-stdout_logfile=logs/crawl58_sjwx.log

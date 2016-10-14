@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import scrapy
-import re
 import urlparse
 import time
 from app.items.v4 import ServiceV4Item
+from app.rules import *
 
 
 base_city_ist = [
@@ -22,18 +22,6 @@ class Crawl58ServiceBaomuV4Spider(scrapy.Spider):
         'http://sh.58.com/baomu/',  # 保姆/月嫂
     ]
 
-    city_rule = r'.*/(\w+)/\w+/$'
-    cate_rule = r'.*/(\w+)/$'
-    page_num_rule = r'/pn(\d+)/$'
-    company_address_rule = ur'<i>地　　址：</i>\s*<p>(.*)</p>'
-    company_reg_date_rule = ur'<i>注册时间：</i>\s*<p>(.*)</p>'
-
-    city_re_compile = re.compile(city_rule, re.I)
-    cate_re_compile = re.compile(cate_rule, re.I)
-    page_num_re_compile = re.compile(page_num_rule, re.I)
-    company_address_re_compile = re.compile(company_address_rule, re.I)
-    company_reg_date_re_compile = re.compile(company_reg_date_rule, re.I)
-
     def parse(self, response):
         """
         准备入口数据
@@ -44,7 +32,7 @@ class Crawl58ServiceBaomuV4Spider(scrapy.Spider):
         cate_list = set()  # 服务项目
         res_city_list = response.xpath('//*[@id="relateSelect"]//a/@href').extract()
         for res_city in res_city_list:
-            city = self.city_re_compile.findall(res_city)
+            city = city_re_compile.findall(res_city)
             if not city:
                 continue
             city_list.add(city[0] if city else None)
@@ -53,7 +41,7 @@ class Crawl58ServiceBaomuV4Spider(scrapy.Spider):
         # 服务项目
         res_cate_list = response.xpath('//*[@id="ObjectType"]//a/@href').extract()
         for res_cate in res_cate_list:
-            cate = self.cate_re_compile.findall(res_cate)
+            cate = cate_re_compile.findall(res_cate)
             if not cate:
                 continue
             cate_list.add(cate[0] if cate else None)
@@ -70,7 +58,7 @@ class Crawl58ServiceBaomuV4Spider(scrapy.Spider):
         抓取列表
         """
         # 获取当前页码
-        page_num_result = self.page_num_re_compile.findall(response.url)
+        page_num_result = page_num_re_compile.findall(response.url)
         fetch_page_num = page_num_result[0] if page_num_result else ''
 
         # 获取当前列表页面 城市、分类 编码
@@ -132,10 +120,10 @@ class Crawl58ServiceBaomuV4Spider(scrapy.Spider):
             '//div[@class="description"]/div[@class="newinfo"]/ul/li[1]/a/text()').extract()])
         company_name = response.xpath('//div[@class="userinfo"]/h2/text()').extract_first(default='').strip()
         company_address_re_list = response.xpath('//div[@class="userinfo"]/ul[@class="uinfolist"]/li').re(
-            self.company_address_re_compile)
+            company_address_re_compile)
         company_address = company_address_re_list[0].strip() if company_address_re_list else ''
         company_reg_date_re_list = response.xpath('//div[@class="userinfo"]/ul[@class="uinfolist"]/li').re(
-            self.company_reg_date_re_compile)
+            company_reg_date_re_compile)
         company_reg_date = company_reg_date_re_list[0].strip().replace('.', '-') if company_reg_date_re_list else ''
         company_home_page = response.xpath('//li[@class="weizhan"]//div[@class="zhan_r_con"]/a/@href').extract_first(
             default='').strip()
@@ -144,7 +132,7 @@ class Crawl58ServiceBaomuV4Spider(scrapy.Spider):
         verified_personal = int(
             response.xpath('//span[@class="ico-rzv-o"]/@title').extract_first(default='').strip() == u'个人身份已认证')
         verified_company = int(
-            response.xpath('//span[@class="ico-rzv-b"]/@title').extract_first(default='').strip() == u'企业营业执照已认证')
+            response.xpath('//span[@class="ico-rzv-b"]/@title').extract_first(default='').strip() == u'企业执照已认证')
 
         fetch_time = time.strftime("%Y-%m-%d %H:%M:%S")  # 抓取时间
 
