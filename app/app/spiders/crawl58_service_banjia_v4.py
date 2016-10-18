@@ -21,7 +21,7 @@ class Crawl58ServiceBanjiaV4Spider(scrapy.Spider):
     allowed_domains = ["58.com"]
     start_urls = [
         'http://sh.58.com/banjia/',  # 搬家
-        'http://sz.58.com/banjia/',  # 搬家（深圳）
+        'http://sz.58.com/banjia/'  # 搬家（深圳）
     ]
 
     def parse(self, response):

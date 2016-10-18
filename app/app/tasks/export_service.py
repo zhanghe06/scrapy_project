@@ -187,8 +187,8 @@ def run():
                 print u'总共耗时: %.2f M' % ((end_time - start_time) / 60.0)
                 break
             # 插入数据
-            insert_rows = [service_row for service_row in service_rows if service_row.id not in user_phone_set]
-            data_list = [trans_map(row) for row in insert_rows]  # todo
+            insert_rows = [service_row for service_row in service_rows if service_row.contact_phone not in user_phone_set]
+            data_list = [trans_map(row) for row in insert_rows]
             insert_nums = insert_crawl_service_rows(db_session_mysql, data_list)
             print u'插入抓取数据: %s' % insert_nums
             # 更新字段

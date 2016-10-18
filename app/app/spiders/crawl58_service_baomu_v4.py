@@ -19,7 +19,7 @@ class Crawl58ServiceBaomuV4Spider(scrapy.Spider):
     name = "crawl58_service_baomu_v4"
     allowed_domains = ["58.com"]
     start_urls = [
-        'http://sh.58.com/baomu/',  # 保姆/月嫂
+        'http://sh.58.com/baomu/'  # 保姆/月嫂
     ]
 
     def parse(self, response):
