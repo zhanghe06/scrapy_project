@@ -38,6 +38,17 @@ from sqlalchemy.sql import func
 - func.concat('x', 'y')
 
 
+### 分组统计
+
+```
+session \
+    .query(Table.column, func.count(Table.column)) \
+    .group_by(Table.column) \
+    .order_by(func.count(Table.column).desc()) \
+    .all()
+```
+
+
 ### Transtraction
 
 基本结构：
