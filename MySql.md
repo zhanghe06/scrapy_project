@@ -92,3 +92,17 @@ mysql>flush privileges;
 重新杀 MySQL ，用正常方法启动 MySQL
 一定注意：很多新手没有用password=password("...")，而是直接password="..."所以改掉密码不好使
 ```
+
+
+## 高级功能
+
+根据分隔符反转字符串
+```
+MariaDB [s2c]> select reverse(substring_index('aa,bb,cc,dd', ',', 4));
++-------------------------------------------------+
+| reverse(substring_index('aa,bb,cc,dd', ',', 4)) |
++-------------------------------------------------+
+| dd,cc,bb,aa                                     |
++-------------------------------------------------+
+```
+

@@ -247,5 +247,46 @@ ORDER BY c DESC;
 
 字符串分割为数组
 ```
-SELECT regexp_split_to_array('kenyon,love,,china,!', ',');
+wl_crawl=# SELECT regexp_split_to_array('kenyon,love,,china,!', ',');
+  regexp_split_to_array
+--------------------------
+ {kenyon,love,"",china,!}
+(1 row)
+```
+
+查看数据库大小
+```
+wl_crawl=# select pg_size_pretty(pg_database_size('postgres'));
+ pg_size_pretty
+----------------
+ 7490 MB
+(1 row)
+```
+
+
+格式化当前日期/时间
+```
+wl_crawl=# SELECT CURRENT_DATE;
+    date
+------------
+ 2016-11-02
+(1 row)
+
+wl_crawl=# SELECT CURRENT_TIMESTAMP;
+              now
+-------------------------------
+ 2016-11-02 11:43:17.206364+08
+(1 row)
+
+wl_crawl=# SELECT to_char(CURRENT_DATE,'yyyy-mm-dd hh24:mi:ss');
+       to_char
+---------------------
+ 2016-11-02 00:00:00
+(1 row)
+
+wl_crawl=# SELECT to_char(CURRENT_TIMESTAMP,'yyyy-mm-dd hh24:mi:ss');
+       to_char
+---------------------
+ 2016-11-02 11:44:58
+(1 row)
 ```
