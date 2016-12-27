@@ -25,6 +25,20 @@ grant select,insert,update,delete on *.* to www@"%" Identified by "abc";
 flush privileges;
 ```
 
+备份 mysqldump
+```
+-t 不输出建表信息，即只输出表数据
+-d 不输出数据信息，即只输出表结构
+# 备份表结构和数据到本地
+mysqldump -h[host] -P[port] -u[user] -p[passwd] [db] [table] [--where=" 1=1"] --skip-lock-tables > /tmp/table.sql
+```
+
+导入
+```
+mysql -h[host] -P[port] -u[user] -p[pass] [db] < /tmp/table.sql
+```
+
+
 ### 数据表建立
 
 ```

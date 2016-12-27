@@ -199,6 +199,18 @@ postgres=# DROP TABLE service CASCADE;
 alter table 表名 rename to 新表名
 ```
 
+备份 pg_dump
+```
+-a 只导出数据，不导出模式
+-s 只导出模式，不导出数据
+pg_dump -h ['host'] -p ['port'] -U ['user'] -W -d ['database'] -f /tmp/db.sql
+```
+
+导入
+```
+psql -h ['host'] -p ['port'] -U ['user'] -W -d ['database'] -f /tmp/db.sql
+```
+
 
 ## 关于建表的一些常识
 
