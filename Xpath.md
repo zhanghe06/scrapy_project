@@ -25,3 +25,10 @@ http://scrapy-chs.readthedocs.io/zh_CN/latest/topics/selectors.html#xpaths
 >>> sel.xpath('//li[re:test(@class, "item-\d$")]//@href').extract_first()
 u'link1.html'
 ```
+
+获取页面源码
+
+```
+response.body  # 字节码
+response.body_as_unicode()  # unicode 编码
+```

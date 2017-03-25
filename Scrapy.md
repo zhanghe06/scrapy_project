@@ -274,3 +274,35 @@ Spider中间件是在引擎及Spider之间的特定钩子(specific hook)，处�
 ```
 
 更多可以参考[Scrapy实例演示](https://github.com/zhanghe06/scrapy_project)
+
+
+## 调试
+
+命令行调试
+```
+$ scrapy parse --spider=myspider -c parse_item -d 2 <item_url>
+
+```
+
+终端调试
+```
+from scrapy.shell import inspect_response
+
+def parse_details(self, response):
+    item = response.meta.get('item', None)
+    if item:
+        # populate more `item` fields
+        return item
+    else:
+        inspect_response(response, self)
+```
+
+
+浏览器中显示
+```
+from scrapy.utils.response import open_in_browser
+
+def parse_details(self, response):
+    if "item name" not in response.body:
+        open_in_browser(response)
+```
