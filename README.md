@@ -98,3 +98,51 @@ DEFAULT_REQUEST_HEADERS
 # 禁用cookie 默认是开启的, 注释打开即可
 COOKIES_ENABLED = False
 ```
+
+
+## 关于去重
+
+- 请求去重：Middleware 实现
+- 数据去重：Pipeline 实现
+
+settings.py 配置实例：
+```
+DOWNLOADER_MIDDLEWARES = {
+    'app.middlewares.IgnoreRequestMiddleware': 50,  # 请求去重
+    ...
+}
+```
+
+```
+ITEM_PIPELINES = {
+    'app.pipelines.UniqPostgreSQLPipeline': 600,  # 数据去重
+    ...
+}
+```
+
+将请求和数据分开处理，请求去重后，可以减少不必要的资源消耗；数据去重，防止重复数据插入
+通常，这样就够了。
+当采用异步多任务模型进行抓取，依然无法避免重复数据插入
+
+
+## socks 代理支持
+
+scrapy 本身不支持 socks 代理, 需要借助工具（privoxy）转为 http 代理
+
+```
+# 安装
+✗ brew install privoxy
+
+# 修改配置(注意最后的点)
+✗ vim /usr/local/etc/privoxy/config
+
+listen-address  0.0.0.0:8118
+forward-socks5 / 127.0.0.1:1080 .
+
+# 重启服务
+✗ privoxy /usr/local/etc/privoxy/config
+
+# 测试 http 代理
+✗  curl -x 127.0.0.1:8118 ip.cn
+当前 IP：104.250.146.37 来自：美国 GorillaServers
+```
