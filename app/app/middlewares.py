@@ -55,7 +55,7 @@ class IgnoreRequestMiddleware(object):
     url 请求去重
     """
     def __init__(self, redis_host, redis_port):
-        self.redis_client = redis.StrictRedis(host=redis_host, port=redis_port)
+        self.redis_client = redis.Redis(host=redis_host, port=redis_port)
 
     @classmethod
     def from_crawler(cls, crawler):
@@ -73,3 +73,13 @@ class IgnoreRequestMiddleware(object):
             raise IgnoreRequest("Spider : %s, IgnoreRequest : %s" % (spider.name, request.url))
         else:
             self.redis_client.sadd(spider.name, url_hash)
+
+
+class ContentTypeGb2312Middleware(object):
+    """
+    处理不规范的页面（优先级降低至580之后才能生效）
+    指定 Content-Type 为 gb2312
+    """
+    def process_response(self, request, response, spider):
+        response.headers['Content-Type'] = 'text/html; charset=gb2312'
+        return response
