@@ -25,5 +25,3 @@ app/crawls
 # 环境变量
 app/app/config/config_mode
 
-# supervisor 配置
-etc/supervisord.conf
