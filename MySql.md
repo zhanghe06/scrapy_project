@@ -120,3 +120,19 @@ MariaDB [s2c]> select reverse(substring_index('aa,bb,cc,dd', ',', 4));
 +-------------------------------------------------+
 ```
 
+分离IP地址段
+```
+SET @ip = '222.71.21.51';
+
+select ip,
+CONVERT(SUBSTRING_INDEX(ip , '.', 1),UNSIGNED INTEGER),
+CONVERT(SUBSTRING_INDEX(SUBSTRING_INDEX(ip, '.', 2),'.',-1),UNSIGNED INTEGER), 
+CONVERT(SUBSTRING_INDEX(SUBSTRING_INDEX(ip, '.', -2),'.',1),UNSIGNED INTEGER),
+CONVERT(SUBSTRING_INDEX(ip, '.', -1),UNSIGNED INTEGER);
++--------------+-------+--------+-------+--------+
+| @ip          | first | second | third | fourth |
++--------------+-------+--------+-------+--------+
+| 222.71.21.51 |   222 |     71 |    21 |     51 |
++--------------+-------+--------+-------+--------+
+1 row in set (0.00 sec)
+```
