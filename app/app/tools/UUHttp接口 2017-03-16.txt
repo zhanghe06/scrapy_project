@@ -1,0 +1,111 @@
+﻿所有请求的通用header：
+request.Headers.Add("SID",软件id);                                            
+request.Headers.Add("HASH",md5(软件id+软件key.ToUpper()));					//32位MD5加密小写
+request.Headers.Add("UUVersion","1.0.0.1");                    
+request.Headers.Add("UID",UserID);											//没有登录之前，UserID就用100。登录成功后，服务器会返回UserID，之后的请求就用服务器返回的UserID		      
+request.Headers.Add("User-Agent", MD5(软件key.ToUpper() + UserID));			//没有登录之前，UserID就用100。登录成功后，服务器会返回UserID，之后的请求就用服务器返回的UserID
+
+用户登录时候的特殊header：
+除了以上header之外，增加如下：
+request.Headers.Add("KEY",MD5(软件key.ToUpper()+UserName.ToUpper())+MAC);    				//MAC把特殊符号去掉，纯粹字母数字
+request.Headers.Add("UUKEY", MD5(UserName.ToUpper() + MAC + 软件key.ToUpper()));		 	//MAC把特殊符号去掉，纯粹字母数字
+
+查分时候的特殊header:
+request.Headers.Add("UUAgent", MD5(UserKEY.ToUpper() + UserID + 软件KEY));
+request.Headers.Add("KEY", UserKey);
+
+1.获取(刷新)服务器列表:
+Get http://common.taskok.com:9000/Service/ServerConfig.aspx
+
+/// 域名:端口:类型 例如
+/// login.uuwise.com:9000:101,upload.uuwise.com:8080:102,result.uuwise.com:8080:103,
+/// 类型101表示登录服务器，102表示上传服务器，103表示获取结果服务器，104表示备份服务器（当upload连续出错的话，调用备份服务器,备份服务器包含所有方法，登录，上传，取得结果）
+           
+string s = "1000,service.taskok.com:9000:101,upload.taskok.com:9000:102,code.taskok.com:9000:103,bak.taskok.com:104";
+1000,表示间隔1000毫秒，请求一次getResult
+
+2.登录
+Get http://***.***.***:***/Upload/UULogin.aspx?U={0}&p={1} 
+{0}为用户名 {1}为密码的md5值
+
+返回结果：
+成功返回UserKey(保存下来，后面上传图片的时候需要这个参数), UserKey的格式为 UserID_userName_随机串, 取出第一个下划线之前的内容即为UserID。
+失败返回错误代码，错误代码均为负数，官方网站(http://www.uuwise.com/allErrorCode.html)上面有每一个错误代码的具体含义
+
+3.查分
+Get http://***.***.***:***/Upload/GetPoint.aspx?U={0}&p={1} 
+{0}为用户名 {1}为密码的md5值
+
+返回结果：
+成功返回当前的用户点数
+失败返回错误代码
+
+4.上传图片
+在上传图片之前，需要请求 http://common.taskok.com:9000/Service/ServerConfig.aspx 来刷新服务器列表
+Post http://***.***.***:***/Upload/Processing.aspx
+
+数据：
+KEY：  		UserKey.ToUpper()
+SID:		软件id
+SKEY:		求MD5(UserKey.ToLower()+软件id+软件key)
+Version:	100
+TimeOut:	超时时间，单位为毫秒，必须大于20000
+Type:		验证码的CodeType，详见：http://www.uuwise.com/price.html
+IMG：   	图片文件字节集
+GUID： 		图片文件的Md5()
+
+返回结果：
+
+成功返回：
+验证码id 			//这个时候表示无结果，需要请求getresult
+或者
+验证码id|Result 	//Result即为识别结果
+例如：12130123|ssdd
+
+失败返回错误代码
+
+
+
+5. 获取识别结果
+GET http://***.***.***:***/Upload/GetResult.aspx?key={0}&ID={1}
+{0}为UserKey, {1}为验证码id
+
+返回结果:
+如果返回结果为-3，则代表服务器还未识别完成，间隔1000毫秒，循环请求getResult
+成功返回验证码识别结果，错误返回错误代码
+
+
+6. 报错
+GET http://***.***.***:***/Upload/ReportError.aspx?KEY={0}&ID={1}&SID={2}&SKEY={3}
+{0}为UserKey,{1}为验证码id，{2}为软件id，{3}为SKEY，值为MD5(UserKey.ToLower()+软件id+软件key)
+
+返回结果：
+成功返回OK， 错误返回错误代码
+
+
+
+7.新用户注册：
+Post http://***.***.***:***//Service/Reg.aspx
+
+数据：
+U：		用户名
+p：		原始密码，不加密
+Sid：	软件id
+UKEY：	Md5(用户名大写+密码+软件ID+软件KEY)
+
+成功返回用户id，失败返回错误代码
+
+
+
+8.充值
+Post http://***.***.***:***//Service/Pay.aspx
+
+数据：
+U：		用户名
+card：	充值卡的卡号
+PKEY：	Md5(用户名大写+软件ID+软件key+充值卡号大写)
+SID：	软件id
+
+成功返回用户账户的余额，失败返回错误代码
+
+

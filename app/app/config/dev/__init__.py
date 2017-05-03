@@ -55,6 +55,22 @@ REDIS = {
     'port': 6379
 }
 
+RABBIT_MQ = {
+    'host': '127.0.0.1',
+    'port': 5672
+}
+
+# UU云验证码识别配置
+UU = {
+    'S_ID': '109640',
+    'S_KEY': '057c42ad8556498e9570f0596b070bf5',
+    'UU_VERSION': '1.0.0.1',
+    'USER_ID': '100',
+    'USERNAME': 'shendongming',
+    'PASSWORD': '12345ert%.c!!@Ysdf'
+}
+
+
 # USER_AGENTS
 USER_AGENTS = [
     "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; AcooBrowser; .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
