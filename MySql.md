@@ -136,3 +136,15 @@ CONVERT(SUBSTRING_INDEX(ip, '.', -1),UNSIGNED INTEGER);
 +--------------+-------+--------+-------+--------+
 1 row in set (0.00 sec)
 ```
+
+延时查询
+```
+select sleep(1);
+```
+
+按日，按周，按月分组统计数据
+```
+select DATE_FORMAT(create_time,'%Y%m%d') days,count(caseid) count from tc_case group by days;
+select DATE_FORMAT(create_time,'%Y%u') weeks,count(caseid) count from tc_case group by weeks;
+select DATE_FORMAT(create_time,'%Y%m') months,count(caseid) count from tc_case group by months;
+```
