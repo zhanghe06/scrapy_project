@@ -133,6 +133,45 @@ $ sudo service postgresql restart
 其他略...
 
 
+修改配置，重新加载配置：
+```
+pg_ctl reload -D /data/postgresql
+```
+
+有些配置修改必须重启服务
+
+其他重启方式：
+```
+$ pg_ctl restart -D /data/postgresql -m fast
+```
+
+参数 -m fast 快速重启
+
+查看服务状态
+```
+$ pg_ctl status -D /data/postgresql/
+pg_ctl: server is running (PID: 41812)
+/usr/local/pgsql9.4/bin/postgres "-D" "/data/postgresql/"
+```
+
+查看最大连接数
+```
+postgres=# show max_connections;
+ max_connections
+-----------------
+ 100
+(1 row)
+```
+
+统计当前连接数
+```
+postgres=# SELECT COUNT(*) from pg_stat_activity;
+ count
+-------
+    58
+(1 row)
+```
+
 
 ## 数据类型
 
@@ -301,4 +340,15 @@ wl_crawl=# SELECT to_char(CURRENT_TIMESTAMP,'yyyy-mm-dd hh24:mi:ss');
 ---------------------
  2016-11-02 11:44:58
 (1 row)
+```
+
+查看7天后的日期
+```
+SELECT current_date;
+SELECT current_date + interval '7 DayS';
+```
+
+延时查询
+```
+select pg_sleep(1);
 ```
