@@ -352,3 +352,16 @@ SELECT current_date + interval '7 DayS';
 ```
 select pg_sleep(1);
 ```
+
+## csv 导入导出
+
+https://www.postgresql.org/docs/current/static/sql-copy.html
+
+```
+# 导入
+COPY table_name FROM 'filename';
+
+# 导出
+COPY table_name TO 'filename';
+COPY ( SELECT * FROM table_name ) TO 'filename';
+```
