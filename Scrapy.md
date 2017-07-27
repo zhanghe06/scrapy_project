@@ -198,6 +198,8 @@ Ctrl-C或者发送一个信号
 
 [架构概览-中文翻译](http://scrapy-chs.readthedocs.org/zh_CN/latest/topics/architecture.html)
 
+[数据流](http://scrapy.readthedocs.io/en/latest/topics/architecture.html#data-flow)
+
 Scrapy的架构(时序：上、右、下、左)：
 
 ```
