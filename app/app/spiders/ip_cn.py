@@ -19,7 +19,21 @@ class IpCnSpider(scrapy.Spider):
         DOWNLOAD_DELAY=2,
         CONCURRENT_REQUESTS_PER_DOMAIN=1,
         CONCURRENT_REQUESTS_PER_IP=1,
-        DOWNLOADER_MIDDLEWARES={'app.middlewares.IgnoreRequestMiddleware': None}
+        DOWNLOADER_MIDDLEWARES={
+            'app.middlewares.UserAgentMiddleware': 100,
+            'app.middlewares.HttpProxyMiddleware': 120,
+            # 'app.middlewares.IgnoreRequestMiddleware': None,
+            'app.middlewares.SignalsMiddleware': 140,
+            # 'app.middlewares.VerificationCodeMiddleware': 160
+        },
+        ITEM_PIPELINES={
+            # 'app.pipelines.exporter_xml.XmlExportPipeline': 800,
+            # 'app.pipelines.exporter_csv.CsvExportPipeline': 800,
+            # 'app.pipelines.exporter_json.JsonExportPipeline': 800,
+            # 'app.pipelines.exporter_json_lines.JsonLinesExportPipeline': 800,
+            'app.pipelines.signals.SignalsPipeline': 800,
+            'app.pipelines.stats.StatsPipeline': 810,
+        }
     )
 
     def parse(self, response):
